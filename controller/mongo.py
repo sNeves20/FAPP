@@ -3,8 +3,6 @@ from genericpath import exists
 from pymongo.operations import InsertOne
 from models.schemas import UserData
 from pymongo import MongoClient, collation, collection
-import json
-import os
 
 ERROR_MESSAGE = "ERROR; MongoConnector"
 
