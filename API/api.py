@@ -21,10 +21,10 @@ async def register_user(credentials: HTTPBasicCredentials = Depends(security) ):
     password = credentials.password
 
     # Checking if user already exists 
-    if user_exists(UserBase(username, password)):
+    if await user_exists(UserBase(username=username, password=password)):
 
         return 400, "A user with that username already exists"
     
-    create_new_user(UserBase(username, password))
+    await create_new_user(UserBase(username=username, password=password))
 
     return 

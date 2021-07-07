@@ -10,18 +10,18 @@ with open('configs/mongo.yml') as config_file:
      config = yaml.load(config_file, Loader=yaml.FullLoader)
 
 
-MONGO_HOST = config['dev']['host'] 
+
+MONGO_HOST = config['dev']['host']
 MONGO_PORT = config['dev']['port']
 DATABASE = config['dev']['database']
 COLLECTION = config['dev']['collection']
-
 
 async def user_exists(userdata: UserBase):
 
     # TODO: Query  the Database
     print("\tStill need to implement this")
 
-    return
+    return False
 
 async def create_new_user(user_data: UserBase):
 
@@ -30,6 +30,7 @@ async def create_new_user(user_data: UserBase):
     mongo.connect_to_database(database_name=DATABASE, collection_name=COLLECTION)
 
 
+    return mongo.add_entry(user_data)
 
 
 

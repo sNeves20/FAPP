@@ -22,5 +22,4 @@ class UserBase(BaseModel):
 
 
 class UserData(UserBase):
-    userid: str = str(uuid4())
     financial_info: Optional[FinancialInfo]
