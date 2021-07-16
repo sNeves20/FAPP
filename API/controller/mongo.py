@@ -3,6 +3,11 @@ import json
 from pymongo.operations import InsertOne
 from models.schemas import UserData
 from pymongo import MongoClient, collation, collection
+from bson.objectid import ObjectId
+import yaml
+import configparser
+from bson.objectid import ObjectId
+
 
 ERROR_MESSAGE = "ERROR; MongoConnector"
 
@@ -52,13 +57,13 @@ class MongoConnector:
         return True
 
 
-    def add_entry(self, data: UserData) -> bool:
+    def add_user(self, user: UserData) -> bool:
         """
         Method that adds a user to the database
-
+        :params user: User data to be added
         :returns bool: Returns true if user was added to DB and false if it was not
         """
-        json_data = data.dict()
+        json_data = user.dict()
         print(json_data)
         try:
             self.collection.insert(json_data)
@@ -69,13 +74,38 @@ class MongoConnector:
         
         return True
 
+    def edit_entry(self, userid: ObjectId, query) -> bool:
+        """ 
+        Method that edits the data of a certain userid
+        
+        :param userid: The userid of the user that we will edit the information for
+        :param query: The query that we will make to edit the data
+
+        :return bool Returns True if the userdata was successfully edited
+        """
+
+        return 
     def search_by_username(self, username:str) -> dict:
 
         user = self.collection.find_one({"username": username})
-        
 
         return user
 
-    def search_by_uuid(self, uuid) -> dict:
+    def search_by_userid(self, userid) -> dict:
         
-        user = self.collection.find(f"")
+        user = self.collection.find({"_id": ObjectId(userid)})
+
+    @staticmethod
+    def connect_db_conf():
+        # Loading from config file
+        with open('configs/mongo.yml') as config_file:
+            config = yaml.load(config_file, Loader=yaml.FullLoader)
+
+        MONGO_HOST = config['dev']['host']
+        MONGO_PORT = config['dev']['port']
+        DATABASE = config['dev']['database']
+        COLLECTION = config['dev']['collection']
+        
+        mongo = MongoConnector(mongo_host = MONGO_HOST, mongo_port = MONGO_PORT)
+        mongo.connect_to_database(database_name=DATABASE, collection_name=COLLECTION)
+        return mongo
