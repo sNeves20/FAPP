@@ -74,7 +74,7 @@ class MongoConnector:
         
         return True
 
-    def edit_entry(self, userid: ObjectId, query) -> bool:
+    def edit_entry(self, userid: ObjectId, query: dict) -> bool:
         """ 
         Method that edits the data of a certain userid
         
@@ -83,6 +83,7 @@ class MongoConnector:
 
         :return bool Returns True if the userdata was successfully edited
         """
+        results = self.collection.update_one({"_id": userid}, {query})
 
         return 
     def search_by_username(self, username:str) -> dict:
@@ -94,6 +95,8 @@ class MongoConnector:
     def search_by_userid(self, userid) -> dict:
         
         user = self.collection.find({"_id": ObjectId(userid)})
+
+        return user
 
     @staticmethod
     def connect_db_conf():

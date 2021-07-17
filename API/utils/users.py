@@ -15,7 +15,6 @@ async def user_exists(userdata: UserBase):
     if user_data is not None:
         return user_data
 
-    print("Returning False!")
     return False
 
 async def create_new_user(user_data: UserBase):
