@@ -1,5 +1,4 @@
 from genericpath import exists
-import json
 from pymongo.operations import InsertOne
 from models.schemas import UserData
 from pymongo import MongoClient, collation, collection
@@ -83,9 +82,13 @@ class MongoConnector:
 
         :return bool Returns True if the userdata was successfully edited
         """
-        results = self.collection.update_one({"_id": userid}, {query})
 
-        return 
+        print("\t",userid)
+        print('\t',query)
+        results = self.collection.update({"_id": userid}, query)
+        print('\t',results)
+        return results['updatedExisting']
+
     def search_by_username(self, username:str) -> dict:
 
         user = self.collection.find_one({"username": username})
@@ -93,8 +96,11 @@ class MongoConnector:
         return user
 
     def search_by_userid(self, userid) -> dict:
+        """
+        Gets all of the user infor
+        """
         
-        user = self.collection.find({"_id": ObjectId(userid)})
+        user = self.collection.find_one({"_id": ObjectId(userid)})
 
         return user
 
