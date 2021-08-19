@@ -83,11 +83,17 @@ class MongoConnector:
         :return bool Returns True if the userdata was successfully edited
         """
 
-        print("\t",userid)
-        print('\t',query)
-        results = self.collection.update({"_id": userid}, query)
-        print('\t',results)
-        return results['updatedExisting']
+        
+        print('\t',f"{query}")
+        try:
+            results = self.collection.find_one_and_update({'_id': ObjectId(userid)}, query)
+        except:
+            raise   "Deu Merda!"
+        if results is None:
+            return False
+            
+        return True
+
 
     def search_by_username(self, username:str) -> dict:
 

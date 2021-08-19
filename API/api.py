@@ -1,4 +1,6 @@
 from os import stat_result
+
+from bson.objectid import ObjectId
 from models.schemas import UserBase
 from typing import Optional
 from fastapi import FastAPI, Header
@@ -6,11 +8,9 @@ from fastapi import security
 from fastapi.params import Depends
 from fastapi.security import HTTPBasicCredentials, HTTPBasic
 from utils.users import user_exists, create_new_user
-from utils.financial import manage_savings
+from utils.financial import manage_savings, get_total_savings
 from utils.securiry import hash_password, check_hash
 from fastapi.responses import JSONResponse
-import asyncio
-
 
 
 app = FastAPI()
@@ -55,7 +55,7 @@ async def login_user(credentials: HTTPBasicCredentials = Depends(security)):
     return JSONResponse({'user_id': str(user_data['_id'])}, status_code=200)
 
 @app.post("/savings/edit")
-async def edit_user_savings(userid: Optional[str] = Header(None), action: Optional[str] = Header(None), value: Optional[float] = Header(None), location: Optional[str] = Header(None)):
+async def edit_user_savings(userid: str = Header(None), action: Optional[str] = Header(None), value: Optional[float] = Header(None), location: Optional[str] = Header(None)):
 
     valid_actions = ["add", "remove"]
 
@@ -79,3 +79,9 @@ async def edit_user_savings(userid: Optional[str] = Header(None), action: Option
         message = ['removed', 'from']
 
     return JSONResponse({"message": f"Successfuly {message[0]} {value}€ {message[1]} savings"}, status_code=200)
+
+@app.get("/savings/getAll")
+async def get_all_savings(userid: str = Header(None)):
+    
+    userid = ObjectId(userid)
+    return await get_total_savings(userid)
