@@ -11,6 +11,7 @@ async def manage_savings(action: str, value: float, userid, location: str = "Non
     mongo = MongoConnector.connect_db_conf()
 
     savings_list = []
+    current_savings = 0
     try:
         savings_list = mongo.search_by_userid(userid=userid)['savings']
     except Exception as e:
@@ -20,12 +21,15 @@ async def manage_savings(action: str, value: float, userid, location: str = "Non
     savings_id = -1
     for i in range(len(savings_list)):
         savings = savings_list[i]
-        if savings['location'] == location:
+        if savings['location'] == location.lower():
             savings_id = i
             break
-
+    # Returning if we try to remove from non existing savings
+    if savings_id == -1 and action == "remove":
+        print("\tUpps")
+        return False
     # Getting current savings
-    if savings_id != -1:
+    elif savings_id != -1:
         current_savings = savings_list[savings_id]['value']
         if (action == 'remove' and value > float(current_savings)):
             raise Exception("Problem removing savings, value is probably larger than the amount in savings.")
@@ -38,6 +42,7 @@ async def manage_savings(action: str, value: float, userid, location: str = "Non
 
         if new_savings == 0:
             savings_list.pop(savings_id)
+    # If location still does not exist, add it
     else:
         savings_list.append({'value': value, 'location': location.lower()})
 

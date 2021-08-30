@@ -1,20 +1,26 @@
-from os import stat_result
+from os import stat, stat_result
+import re
 
 from bson.objectid import ObjectId
-from models.schemas import UserBase
-from typing import Optional
+from pydantic.types import Json
+from yaml import safe_dump
+from models.schemas import SavingsBody, UserBase, BrokerUser
+from typing import AnyStr, Optional
 from fastapi import FastAPI, Header
 from fastapi import security
 from fastapi.params import Depends
 from fastapi.security import HTTPBasicCredentials, HTTPBasic
 from utils.users import user_exists, create_new_user
-from utils.financial import manage_savings, get_total_savings
+from utils.savings import manage_savings, get_total_savings
 from utils.securiry import hash_password, check_hash
+from utils.stocks import add_broker_account, get_broker_information
 from fastapi.responses import JSONResponse
 
 
 app = FastAPI()
 security = HTTPBasic()
+
+SUPPORTED_BROKERS = ["etoro", "degiro"]
 
 @app.get("/")
 def base():
@@ -54,17 +60,21 @@ async def login_user(credentials: HTTPBasicCredentials = Depends(security)):
 
     return JSONResponse({'user_id': str(user_data['_id'])}, status_code=200)
 
-@app.post("/savings/edit")
-async def edit_user_savings(userid: str = Header(None), action: Optional[str] = Header(None), value: Optional[float] = Header(None), location: Optional[str] = Header(None)):
-
+@app.post("/savings/editAmount")
+async def edit_user_savings(savings_info: SavingsBody, userid: str = Header(None)):
+    """ Adds or removes value to savings according to bank location"""
     valid_actions = ["add", "remove"]
+
+    action = savings_info.action
+    value = savings_info.amount
+    location = savings_info.location
 
     if action is None or value is None:
         return JSONResponse({"error_message" : "The action and value are mandatory headers!"}, status_code=400)
     
     if not action in valid_actions:
         return JSONResponse({"error_message": f"The action header needs to be one of the following: {valid_actions}"}, status_code=400)
-    
+    print(userid,action,value, location)
     try:
         results = await manage_savings(userid=userid, action=action, value=value, location=location)
         if results is False:
@@ -80,8 +90,31 @@ async def edit_user_savings(userid: str = Header(None), action: Optional[str] = 
 
     return JSONResponse({"message": f"Successfuly {message[0]} {value}€ {message[1]} savings"}, status_code=200)
 
-@app.get("/savings/getAll")
+@app.get("/savings/getTotalAmount")
 async def get_all_savings(userid: str = Header(None)):
-    
+    """ Gets the total amount in savings """
     userid = ObjectId(userid)
-    return await get_total_savings(userid)
+    return JSONResponse({"message": f"{await get_total_savings(userid)}"}, status_code=200)
+
+# Stock endpoints
+@app.post("/stocks/brokers/addAccount")
+async def sync_broker_account(userdata: BrokerUser, userid: str=Header(None)):
+    """ Adds a broker account to  """ 
+
+    if  userdata.broker_name.lower() not in SUPPORTED_BROKERS:
+        return JSONResponse({"message": f"The broker you are trying add is not supported. \n Try one of the following brokers: {SUPPORTED_BROKERS}"}, status_code=400)
+    try:
+        if await add_broker_account(userdata, userid=userid):
+            return JSONResponse({"message": f"Successfully added a new {userdata.broker_name} broker account!"}, status_code=200)
+    except Exception as e:
+        return JSONResponse({"message": "Failed to add a new broker account", "error": f"{e}"}, status_code=500)
+
+    return JSONResponse({"message": "Failed to add a new broker account"}, status_code=400)
+
+
+@app.get("/stocks/brokers/getInfomation")
+async def get_broker(broker: str = Header(None), userid: str = Header(None)):
+
+    information = get_broker_information(userid, broker)
+
+    return information

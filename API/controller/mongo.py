@@ -4,7 +4,6 @@ from models.schemas import UserData
 from pymongo import MongoClient, collation, collection
 from bson.objectid import ObjectId
 import yaml
-import configparser
 from bson.objectid import ObjectId
 
 
@@ -83,12 +82,10 @@ class MongoConnector:
         :return bool Returns True if the userdata was successfully edited
         """
 
-        
-        print('\t',f"{query}")
         try:
             results = self.collection.find_one_and_update({'_id': ObjectId(userid)}, query)
         except:
-            raise   "Deu Merda!"
+            raise Exception("Error updating user entry")
         if results is None:
             return False
             
@@ -123,4 +120,5 @@ class MongoConnector:
         
         mongo = MongoConnector(mongo_host = MONGO_HOST, mongo_port = MONGO_PORT)
         mongo.connect_to_database(database_name=DATABASE, collection_name=COLLECTION)
+        
         return mongo

@@ -3,7 +3,7 @@ from getpass import getpass
 
 SECRET_KEY = bcrypt.gensalt(rounds=16)
 
-def hash_password(password: str):
+def hash_password(password: str) -> bytes:
     hashed_password = bcrypt.hashpw(password.encode(), SECRET_KEY)
 
     return hashed_password

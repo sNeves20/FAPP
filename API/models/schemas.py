@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from uuid import uuid4
 from typing import Optional, List
 
 
@@ -23,3 +22,12 @@ class UserBase(BaseModel):
 
 class UserData(UserBase):
     financial_info: Optional[FinancialInfo]
+
+
+class BrokerUser(UserBase):
+    broker_name: str
+
+class SavingsBody(BaseModel):
+    location: Optional[str]
+    amount: float
+    action: str
