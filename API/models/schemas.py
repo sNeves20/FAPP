@@ -27,6 +27,7 @@ class UserData(UserBase):
 class BrokerUser(UserBase):
     broker_name: str
 
+
 class SavingsBody(BaseModel):
     location: Optional[str]
     amount: float

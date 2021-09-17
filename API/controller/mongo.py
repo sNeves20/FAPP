@@ -9,16 +9,15 @@ from bson.objectid import ObjectId
 
 ERROR_MESSAGE = "ERROR; MongoConnector"
 
-class MongoConnector:
 
-    def __init__(self, mongo_host:str, mongo_port:int = None):
-        
+class MongoConnector:
+    def __init__(self, mongo_host: str, mongo_port: int = None):
+
         self.db = None
-        self.collection = None 
+        self.collection = None
 
         self.open_connection(mongo_port=mongo_port, mongo_host=mongo_host)
 
-    
     def open_connection(self, mongo_host, mongo_port):
         try:
             if mongo_port is not None:
@@ -27,15 +26,15 @@ class MongoConnector:
                 self.client = MongoClient(mongo_host)
         except Exception as e:
             raise e
-    
+
     def close_connection(self):
-        
+
         try:
             self.client.close()
-        except Exception as e :
+        except Exception as e:
             raise e
 
-    def connect_to_database(self, database_name:str, collection_name: str) -> False:
+    def connect_to_database(self, database_name: str, collection_name: str) -> False:
 
         """
         Connects to a Mongo database
@@ -49,11 +48,10 @@ class MongoConnector:
             self.db = self.client[database_name]
             self.collection = self.db[collection_name]
         except Exception as e:
-            print (f"{ERROR_MESSAGE}: Error connecting to Database \n\t {e}")    
+            print(f"{ERROR_MESSAGE}: Error connecting to Database \n\t {e}")
             return False
 
         return True
-
 
     def add_user(self, user: UserData) -> bool:
         """
@@ -69,13 +67,13 @@ class MongoConnector:
 
             print(f"{ERROR_MESSAGE}: Error Adding entry \n \t {e}")
             return False
-        
+
         return True
 
     def edit_entry(self, userid: ObjectId, query: dict) -> bool:
-        """ 
+        """
         Method that edits the data of a certain userid
-        
+
         :param userid: The userid of the user that we will edit the information for
         :param query: The query that we will make to edit the data
 
@@ -83,16 +81,17 @@ class MongoConnector:
         """
 
         try:
-            results = self.collection.find_one_and_update({'_id': ObjectId(userid)}, query)
+            results = self.collection.find_one_and_update(
+                {"_id": ObjectId(userid)}, query
+            )
         except:
             raise Exception("Error updating user entry")
         if results is None:
             return False
-            
+
         return True
 
-
-    def search_by_username(self, username:str) -> dict:
+    def search_by_username(self, username: str) -> dict:
 
         user = self.collection.find_one({"username": username})
 
@@ -102,7 +101,7 @@ class MongoConnector:
         """
         Gets all of the user infor
         """
-        
+
         user = self.collection.find_one({"_id": ObjectId(userid)})
 
         return user
@@ -110,15 +109,15 @@ class MongoConnector:
     @staticmethod
     def connect_db_conf():
         # Loading from config file
-        with open('configs/mongo.yml') as config_file:
+        with open("configs/mongo.yml") as config_file:
             config = yaml.load(config_file, Loader=yaml.FullLoader)
 
-        MONGO_HOST = config['dev']['host']
-        MONGO_PORT = config['dev']['port']
-        DATABASE = config['dev']['database']
-        COLLECTION = config['dev']['collection']
-        
-        mongo = MongoConnector(mongo_host = MONGO_HOST, mongo_port = MONGO_PORT)
+        MONGO_HOST = config["dev"]["host"]
+        MONGO_PORT = config["dev"]["port"]
+        DATABASE = config["dev"]["database"]
+        COLLECTION = config["dev"]["collection"]
+
+        mongo = MongoConnector(mongo_host=MONGO_HOST, mongo_port=MONGO_PORT)
         mongo.connect_to_database(database_name=DATABASE, collection_name=COLLECTION)
-        
+
         return mongo
