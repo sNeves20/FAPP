@@ -13,14 +13,12 @@ from fastapi.security import HTTPBasicCredentials, HTTPBasic
 from utils.users import user_exists, create_new_user
 from utils.savings import manage_savings, get_total_savings, Actions
 from utils.securiry import hash_password, check_hash
-from utils.stocks import add_broker_account, get_broker_information
+from utils.stocks import add_broker_account, get_broker_information, SupportedBrokers
 from fastapi.responses import JSONResponse
 
 
 app = FastAPI(title="Financial APPlication", version="0.0.1")
 security = HTTPBasic()
-
-SUPPORTED_BROKERS = ["etoro", "degiro"]
 
 
 @app.get("/")
@@ -78,24 +76,24 @@ async def login_user(credentials: HTTPBasicCredentials = Depends(security)):
 async def edit_user_savings(savings_info: SavingsBody, userid: str = Header(None)):
     """Adds or removes value to savings according to bank location"""
 
-    action = savings_info.action
+    action = savings_info.action.lower()
     value = savings_info.amount
     location = savings_info.location
 
-    if action is None or value is None:
-        return JSONResponse(
-            {"error_message": "The action and value are mandatory headers!"},
-            status_code=400,
-        )
-
-    if not action in Actions.__members__:
+    # Checking body information
+    if (
+        action is None
+        or (value is None or value < 0)
+        or not action in Actions.__members__
+    ):
         return JSONResponse(
             {
-                "error_message": f"The action header needs to be one of the following: {Actions.__members__}"
+                "error_message": "There is information missing in your request. \n Please verify that your request has the correct: action and value"
             },
             status_code=400,
         )
-    print(userid, action, value, location)
+
+    # Editing data in the Database
     try:
         results = await manage_savings(
             userid=userid, action=action, value=value, location=location
@@ -105,7 +103,6 @@ async def edit_user_savings(savings_info: SavingsBody, userid: str = Header(None
                 {"error_message": "Could not add data to the database"}, status_code=500
             )
     except Exception as e:
-        print(e)
         return JSONResponse(
             {
                 "error_message": "An error occurred while trying to edit savings",
@@ -114,9 +111,10 @@ async def edit_user_savings(savings_info: SavingsBody, userid: str = Header(None
             status_code=500,
         )
 
-    if action == Actions.Add:
+    print(Actions.Add.name)
+    if action == Actions.Add.name:
         message = ["added", "to"]
-    elif action == Actions.Remove:
+    elif action == Actions.Remove.name:
         message = ["removed", "from"]
 
     return JSONResponse(
@@ -139,7 +137,7 @@ async def get_all_savings(userid: str = Header(None)):
 async def sync_broker_account(userdata: BrokerUser, userid: str = Header(None)):
     """Adds a broker account to"""
 
-    if userdata.broker_name.lower() not in SUPPORTED_BROKERS:
+    if userdata.broker_name.lower() not in SupportedBrokers.__members__:
         return JSONResponse(
             {
                 "message": f"The broker you are trying add is not supported. \n Try one of the following brokers: {SUPPORTED_BROKERS}"
@@ -168,6 +166,6 @@ async def sync_broker_account(userdata: BrokerUser, userid: str = Header(None)):
 @app.get("/stocks/brokers/getInfomation")
 async def get_broker(broker: str = Header(None), userid: str = Header(None)):
 
-    information = get_broker_information(userid, broker)
+    information = await get_broker_information(userid, broker.lower())
 
     return information

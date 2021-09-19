@@ -5,6 +5,13 @@ from utils.users import user_exists
 from controller.mongo import MongoConnector
 from pymongo import mongo_client
 from models.schemas import BrokerUser
+from enum import Enum, auto
+
+
+class SupportedBrokers(Enum):
+
+    degiro = auto()
+    etoro = auto()
 
 
 async def add_broker_account(user: BrokerUser, userid: ObjectId) -> bool:
@@ -57,7 +64,7 @@ async def get_broker_information(userid: ObjectId, broker: str) -> dict:
         print(f"\t ERROR in accessing database {__name__}! Full error {e}")
 
     if query != None:
-        brokers = query["broker"]
+        brokers = query["brokers"]
 
     for broker_info in brokers:
         if broker_info["broker"] == broker:

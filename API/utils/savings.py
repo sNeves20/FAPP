@@ -9,8 +9,8 @@ from enum import Enum, auto
 class Actions(Enum):
     """Enum for the available action we can execute on savings"""
 
-    Add = auto()
-    Remove = auto()
+    add = auto()
+    remove = auto()
 
 
 # Savings
@@ -37,7 +37,7 @@ async def manage_savings(
             savings_id = i
             break
     # Returning if we try to remove from non existing savings
-    if savings_id == -1 and action == Actions.Remove:
+    if savings_id == -1 and action == Actions.Remove.name:
         return False
     # Getting current savings
     elif savings_id != -1:
@@ -46,9 +46,9 @@ async def manage_savings(
             raise Exception(
                 "Problem removing savings, value is probably larger than the amount in savings."
             )
-        elif action == Actions.Remove:
+        elif action == Actions.Remove.name:
             new_savings = float(current_savings) - float(value)
-        elif action == Actions.Add:
+        elif action == Actions.Add.name:
             new_savings = float(current_savings) + float(value)
 
         savings_list[savings_id]["value"] = new_savings
@@ -64,7 +64,7 @@ async def manage_savings(
     return results
 
 
-async def get_total_savings(userid: ObjectId):
+async def get_total_savings(userid: ObjectId) -> float:
 
     mongo = MongoConnector.connect_db_conf()
 
