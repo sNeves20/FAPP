@@ -33,9 +33,10 @@ async def add_broker_account(user: BrokerUser, userid: ObjectId) -> bool:
 
     if broker_list:
         for broker in broker_list:
-            if broker["broker"] == BrokerUser.broker_name:
+            if broker["broker"] == user.broker_name:
+                print("\t This broker is already registered")
                 raise Exception(
-                    f"There is already a broker account saved for {BrokerUser.broker_name}"
+                    f"There is already a broker account saved for {user.broker_name}"
                 )
     broker_list.append(
         {
@@ -64,10 +65,36 @@ async def get_broker_information(userid: ObjectId, broker: str) -> dict:
         print(f"\t ERROR in accessing database {__name__}! Full error {e}")
 
     if query != None:
-        brokers = query["brokers"]
+        try:
+            brokers = query["brokers"]
+        except:
+            return {"error": 404, "message": "This user does not contain any broker info"}
 
     for broker_info in brokers:
         if broker_info["broker"] == broker:
             return broker_info
 
-    return None
+    return {"error": 404, "message": "This user has not registered any information about the {broker} broker"}
+
+
+async def get_portfolio_data(userid: ObjectId, broker_name: SupportedBrokers) -> dict:
+
+    mongo = MongoConnector.connect_db_conf()
+
+    try:
+        query = mongo.search_by_userid(userid=userid)
+    except Exception as e:
+        prin(f"\t ERROR in accessing database {__name__}! Full error {e}")
+
+    # Return message in case the user has no brokers associated 
+    if query == None:
+        return {"error": 404, "message": "No user exists with that user_id"}
+    try:
+        brokers = query['brokers']
+    except:
+        return {"error": 404, "message": "This user does not contain any broker information"}
+
+    if broker_name == SupportedBrokers.degiro.__name__:
+        broker = DegiroBroker(brokers['degiro'])
+
+    return {"error": 404, "message": "this user has no information about this "}

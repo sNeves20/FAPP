@@ -19,10 +19,18 @@ class DegiroBroker(Broker):
 
     def get_portfolio(self) -> list:
 
-        return degiro.getdata(degiroapi.Data.Type.PORTFOLIO, True)
+        raw_stock_data = degiro.getdata(degiroapi.Data.Type.PORTFOLIO, True)
+
+        return organized_data(filter_stock_data(raw_stock_data))
+        
 
     @static_method
-    def filter_portfolio(item: dict):
+    def filter_stock_data(stock_data: list) -> dict:
         
+        cash_data = [item for item in stock_data if item['positionType']=='CASH']
         
+        product_data = [item for item in stock_data if item['postionType']=='PRODUCT']
+
+        organized_data = {"Cash": cash_data, "Product": product_data}
         
+        return organized_data

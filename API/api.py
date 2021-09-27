@@ -169,3 +169,10 @@ async def get_broker(broker: str = Header(None), userid: str = Header(None)):
     information = await get_broker_information(userid, broker.lower())
 
     return information
+
+@app.get("/stocks/brokers/getPortfolio")
+async def get_portfolio(broker: str = Header(None), userid: str = Header(None)):
+
+    broker = broker.lower()
+
+    
