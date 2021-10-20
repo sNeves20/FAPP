@@ -96,5 +96,5 @@ async def get_portfolio_data(userid: ObjectId, broker_name: SupportedBrokers) ->
 
     if broker_name == SupportedBrokers.degiro.__name__:
         broker = DegiroBroker(brokers['degiro'])
-
-    return {"error": 404, "message": "this user has no information about this "}
+        data = broker.get_portfolio()
+    return {"error": 404, "message": "This user has no information regarding the given broker"}

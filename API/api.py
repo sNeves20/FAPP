@@ -176,3 +176,4 @@ async def get_portfolio(broker: str = Header(None), userid: str = Header(None)):
     broker = broker.lower()
 
     
+    return JSONResponse({"message": ""})
