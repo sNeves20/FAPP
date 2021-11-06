@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-python -m venv fapp
+python3 -m venv fapp
 . fapp/bin/activate
 echo "   Installing Required Files in the Virtual Environment"
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 echo "\n   Starting the API:"
 cd API/
-uvicorn api:app --reload
+python3 -m uvicorn api:app --reload

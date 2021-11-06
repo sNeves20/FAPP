@@ -37,18 +37,18 @@ async def manage_savings(
             savings_id = i
             break
     # Returning if we try to remove from non existing savings
-    if savings_id == -1 and action == Actions.Remove.name:
+    if savings_id == -1 and action == Actions.remove.name:
         return False
     # Getting current savings
     elif savings_id != -1:
         current_savings = savings_list[savings_id]["value"]
-        if action == Actions.Remove and value > float(current_savings):
+        if action == Actions.remove and value > float(current_savings):
             raise Exception(
                 "Problem removing savings, value is probably larger than the amount in savings."
             )
-        elif action == Actions.Remove.name:
+        elif action == Actions.remove.name:
             new_savings = float(current_savings) - float(value)
-        elif action == Actions.Add.name:
+        elif action == Actions.add.name:
             new_savings = float(current_savings) + float(value)
 
         savings_list[savings_id]["value"] = new_savings

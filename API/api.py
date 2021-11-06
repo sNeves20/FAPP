@@ -13,7 +13,12 @@ from fastapi.security import HTTPBasicCredentials, HTTPBasic
 from utils.users import user_exists, create_new_user
 from utils.savings import manage_savings, get_total_savings, Actions
 from utils.securiry import hash_password, check_hash
-from utils.stocks import add_broker_account, get_broker_information, SupportedBrokers
+from utils.stocks import (
+    add_broker_account,
+    get_broker_information,
+    SupportedBrokers,
+    get_portfolio_data,
+)
 from fastapi.responses import JSONResponse
 
 
@@ -111,10 +116,9 @@ async def edit_user_savings(savings_info: SavingsBody, userid: str = Header(None
             status_code=500,
         )
 
-    print(Actions.Add.name)
-    if action == Actions.Add.name:
+    if action == Actions.add.name:
         message = ["added", "to"]
-    elif action == Actions.Remove.name:
+    elif action == Actions.remove.name:
         message = ["removed", "from"]
 
     return JSONResponse(
@@ -170,10 +174,15 @@ async def get_broker(broker: str = Header(None), userid: str = Header(None)):
 
     return information
 
+
 @app.get("/stocks/brokers/getPortfolio")
 async def get_portfolio(broker: str = Header(None), userid: str = Header(None)):
 
     broker = broker.lower()
 
-    
-    return JSONResponse({"message": ""})
+    portfolio_data = await get_portfolio_data(userid=userid, broker_name=broker)
+
+    if "error" in portfolio_data.keys():
+        return JSONResponse({"message": portfolio_data["error"]}, status_code=404)
+
+    return JSONResponse({"message": portfolio_data}, status_code=200)

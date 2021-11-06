@@ -4,8 +4,8 @@ from abc import abstractmethod, ABC
 class Broker(ABC):
     def __init__(self, username, password):
 
-        self.username = username
-        self.password = password
+        self.username = str(username)
+        self.password = str(password)
 
     @abstractmethod
     def login(self):
