@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+python3=python
 python3 -m venv fapp
 . fapp/bin/activate
 echo "   Installing Required Files in the Virtual Environment"

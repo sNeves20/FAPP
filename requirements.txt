@@ -6,4 +6,4 @@ passlib[bcrypt]
 degiroapi
 requests
 black
-streamlit
+pylint
