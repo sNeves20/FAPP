@@ -4,7 +4,7 @@ from fastapi.param_functions import Query
 from utils.users import user_exists
 from controller.mongo import MongoConnector
 from pymongo import mongo_client
-from models.schemas import BrokerUser
+from API.models.schemas import BrokerUser
 from enum import Enum, auto
 from utils.broker_functions.degiro import DegiroBroker
 

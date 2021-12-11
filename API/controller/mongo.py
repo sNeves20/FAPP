@@ -1,6 +1,6 @@
 from genericpath import exists
 from pymongo.operations import InsertOne
-from models.schemas import UserData
+from API.models.schemas import UserData
 from pymongo import MongoClient, collation, collection
 from bson.objectid import ObjectId
 import yaml

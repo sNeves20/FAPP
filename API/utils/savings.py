@@ -1,6 +1,6 @@
 from bson.objectid import ObjectId
 from pymongo.mongo_client import MongoClient
-from models.schemas import UserData
+from API.models.schemas import UserData
 from controller.mongo import MongoConnector
 from logging import Logger, INFO, DEBUG
 from enum import Enum, auto
@@ -43,7 +43,7 @@ async def manage_savings(
     elif savings_id != -1:
         current_savings = savings_list[savings_id]["value"]
         if action == Actions.remove and value > float(current_savings):
-            raise Exception(
+            raise AssertionError(
                 "Problem removing savings, value is probably larger than the amount in savings."
             )
         elif action == Actions.remove.name:

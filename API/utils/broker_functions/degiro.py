@@ -1,4 +1,4 @@
-from utils.broker_functions.brokers import Broker
+from utils.broker_functions import Broker
 import degiroapi
 
 

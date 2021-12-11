@@ -1,15 +1,14 @@
-from os import stat, stat_result
-import re
+"""
+                Financial APPlication: API
+    Entry point of the backend of the Financial Application API
+"""
+# pylint: disable=E0602
 
 from bson.objectid import ObjectId
-from pydantic.types import Json
-from yaml import safe_dump
-from models.schemas import SavingsBody, UserBase, BrokerUser
-from typing import AnyStr, Optional
 from fastapi import FastAPI, Header
-from fastapi import security
 from fastapi.params import Depends
 from fastapi.security import HTTPBasicCredentials, HTTPBasic
+from fastapi.responses import JSONResponse
 from utils.users import user_exists, create_new_user
 from utils.savings import manage_savings, get_total_savings, Actions
 from utils.securiry import hash_password, check_hash
@@ -19,16 +18,11 @@ from utils.stocks import (
     SupportedBrokers,
     get_portfolio_data,
 )
-from fastapi.responses import JSONResponse
+from models.schemas import SavingsBody, UserBase, BrokerUser
 
 
 app = FastAPI(title="Financial APPlication", version="0.0.1")
 security = HTTPBasic()
-
-
-@app.get("/")
-def base():
-    return "<h1 Helcome to the Financial APP! (FAPP)/>"
 
 
 # User Endpoints
@@ -93,7 +87,8 @@ async def edit_user_savings(savings_info: SavingsBody, userid: str = Header(None
     ):
         return JSONResponse(
             {
-                "error_message": "There is information missing in your request. \n Please verify that your request has the correct: action and value"
+                "error_message": "There is information missing in your request. "
+                "\n Please verify that your request has the correct: action and value"
             },
             status_code=400,
         )
@@ -107,11 +102,11 @@ async def edit_user_savings(savings_info: SavingsBody, userid: str = Header(None
             return JSONResponse(
                 {"error_message": "Could not add data to the database"}, status_code=500
             )
-    except Exception as e:
+    except AssertionError as edit_error:
         return JSONResponse(
             {
                 "error_message": "An error occurred while trying to edit savings",
-                "full_error": f"{e}",
+                "full_error": edit_error,
             },
             status_code=500,
         )
@@ -144,7 +139,8 @@ async def sync_broker_account(userdata: BrokerUser, userid: str = Header(None)):
     if userdata.broker_name.lower() not in SupportedBrokers.__members__:
         return JSONResponse(
             {
-                "message": f"The broker you are trying add is not supported. \n Try one of the following brokers: {SUPPORTED_BROKERS}"
+                "message": "The broker you are trying add is not supported."
+                f"\n Try one of the following brokers: {SUPPORTED_BROKERS}"
             },
             status_code=400,
         )

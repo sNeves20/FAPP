@@ -1,6 +1,6 @@
 import re
 from pymongo import mongo_client
-from models.schemas import UserBase
+from API.models.schemas import UserBase
 from controller.mongo import MongoConnector
 import yaml
 
