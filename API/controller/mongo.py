@@ -1,16 +1,22 @@
+"""
+    MongoConnector Class
+    This class is in charge of connecting to a Mongo Database in order to
+    access data  
+"""
 from genericpath import exists
 from pymongo.operations import InsertOne
-from API.models.schemas import UserData
-from pymongo import MongoClient, collation, collection
+from models.schemas import UserData
+from pymongo import MongoClient, collection
 from bson.objectid import ObjectId
 import yaml
 from bson.objectid import ObjectId
+from controller import DataConnector
 
 
 ERROR_MESSAGE = "ERROR; MongoConnector"
 
 
-class MongoConnector:
+class MongoConnector(DataConnector):
     def __init__(self, mongo_host: str, mongo_port: int = None):
 
         self.db = None

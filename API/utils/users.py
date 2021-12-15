@@ -1,8 +1,7 @@
 import re
 from pymongo import mongo_client
-from API.models.schemas import UserBase
+from models.schemas import UserBase
 from controller.mongo import MongoConnector
-import yaml
 
 
 async def user_exists(userdata: UserBase):

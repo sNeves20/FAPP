@@ -14,7 +14,6 @@ from utils.savings import manage_savings, get_total_savings, Actions
 from utils.securiry import hash_password, check_hash
 from utils.stocks import (
     add_broker_account,
-    get_broker_information,
     SupportedBrokers,
     get_portfolio_data,
 )
@@ -134,7 +133,7 @@ async def get_all_savings(userid: str = Header(None)):
 # Stock endpoints
 @app.post("/stocks/brokers/addAccount")
 async def sync_broker_account(userdata: BrokerUser, userid: str = Header(None)):
-    """Adds a broker account to"""
+    """Adds a broker account to the user account"""
 
     if userdata.broker_name.lower() not in SupportedBrokers.__members__:
         return JSONResponse(
@@ -152,9 +151,9 @@ async def sync_broker_account(userdata: BrokerUser, userid: str = Header(None)):
                 },
                 status_code=200,
             )
-    except Exception as e:
+    except NameError as name_error:
         return JSONResponse(
-            {"message": "Failed to add a new broker account", "error": f"{e}"},
+            {"message": "Failed to add a new broker account", "error": f"{name_error}"},
             status_code=500,
         )
 
@@ -163,17 +162,9 @@ async def sync_broker_account(userdata: BrokerUser, userid: str = Header(None)):
     )
 
 
-@app.get("/stocks/brokers/getInfomation")
-async def get_broker(broker: str = Header(None), userid: str = Header(None)):
-
-    information = await get_broker_information(userid, broker.lower())
-
-    return information
-
-
 @app.get("/stocks/brokers/getPortfolio")
 async def get_portfolio(broker: str = Header(None), userid: str = Header(None)):
-
+    """Endpoint that receives data from the given broker"""
     broker = broker.lower()
 
     portfolio_data = await get_portfolio_data(userid=userid, broker_name=broker)

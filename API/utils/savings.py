@@ -1,6 +1,6 @@
 from bson.objectid import ObjectId
 from pymongo.mongo_client import MongoClient
-from API.models.schemas import UserData
+from models.schemas import UserData
 from controller.mongo import MongoConnector
 from logging import Logger, INFO, DEBUG
 from enum import Enum, auto

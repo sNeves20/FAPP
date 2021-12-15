@@ -4,7 +4,7 @@ from fastapi.param_functions import Query
 from utils.users import user_exists
 from controller.mongo import MongoConnector
 from pymongo import mongo_client
-from API.models.schemas import BrokerUser
+from models.schemas import BrokerUser
 from enum import Enum, auto
 from utils.broker_functions.degiro import DegiroBroker
 
@@ -36,7 +36,7 @@ async def add_broker_account(user: BrokerUser, userid: ObjectId) -> bool:
         for broker in broker_list:
             if broker["broker"] == user.broker_name:
                 print("\t This broker is already registered")
-                raise Exception(
+                raise NameError(
                     f"There is already a broker account saved for {user.broker_name}"
                 )
     broker_list.append(
