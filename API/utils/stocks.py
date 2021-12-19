@@ -4,7 +4,7 @@ from fastapi.param_functions import Query
 from utils.users import user_exists
 from controller.mongo import MongoConnector
 from pymongo import mongo_client
-from models.schemas import BrokerUser
+from models.pydantic_schemas import BrokerUser
 from enum import Enum, auto
 from utils.broker_functions.degiro import DegiroBroker
 
@@ -106,6 +106,6 @@ async def get_portfolio_data(userid: ObjectId, broker_name: SupportedBrokers) ->
         broker = DegiroBroker(
             degiro_info["broker_username"], degiro_info["broker_password"]
         )
-        data = await broker.filter_stock_data( await broker.get_portfolio())
+        data = await broker.filter_stock_data(await broker.get_portfolio())
         return data
     return {"error": "This user has no information regarding the given broker"}

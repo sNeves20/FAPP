@@ -4,6 +4,8 @@
 """
 # pylint: disable=E0602
 
+import logging
+from datetime import datetime
 from bson.objectid import ObjectId
 from fastapi import FastAPI, Header
 from fastapi.params import Depends
@@ -17,12 +19,13 @@ from utils.stocks import (
     SupportedBrokers,
     get_portfolio_data,
 )
-from models.schemas import SavingsBody, UserBase, BrokerUser
+from models.pydantic_schemas import SavingsBody, UserBase, BrokerUser
 
 
 app = FastAPI(title="Financial APPlication", version="0.0.1")
 security = HTTPBasic()
 
+logging.basicConfig()
 
 # User Endpoints
 @app.post("/user/signup")

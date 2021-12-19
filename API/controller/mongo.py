@@ -5,7 +5,7 @@
 """
 from genericpath import exists
 from pymongo.operations import InsertOne
-from models.schemas import UserData
+from models.pydantic_schemas import UserData
 from pymongo import MongoClient, collection
 from bson.objectid import ObjectId
 import yaml

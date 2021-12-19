@@ -1,3 +1,6 @@
+"""This is were the several Schemas for 
+Pydantic modules should be placed"""
+
 from pydantic import BaseModel
 from typing import Optional
 
