@@ -1,6 +1,8 @@
+"""This is were the several Schemas for 
+Pydantic modules should be placed"""
+
 from pydantic import BaseModel
-from uuid import uuid4
-from typing import Optional, List
+from typing import Optional
 
 
 class StockBase(BaseModel):
@@ -22,5 +24,14 @@ class UserBase(BaseModel):
 
 
 class UserData(UserBase):
-    userid: str = str(uuid4())
     financial_info: Optional[FinancialInfo]
+
+
+class BrokerUser(UserBase):
+    broker_name: str
+
+
+class SavingsBody(BaseModel):
+    location: Optional[str]
+    amount: float
+    action: str
