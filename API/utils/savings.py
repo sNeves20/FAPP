@@ -1,23 +1,28 @@
-from bson.objectid import ObjectId
-from pymongo.mongo_client import MongoClient
-from models.pydantic_schemas import UserData
-from controller.mongo import MongoConnector
-from logging import Logger, INFO, DEBUG
+"""
+    This module is in charge of handeling the Savings actions
+"""
+# pylint: disable=E0401
+
 from enum import Enum, auto
+
+from bson.objectid import ObjectId
+from controller.mongo import MongoConnector
 
 
 class Actions(Enum):
     """Enum for the available action we can execute on savings"""
 
-    add = auto()
-    remove = auto()
+    ADD = auto()
+    REMOVE = auto()
 
 
 # Savings
 async def manage_savings(
     action: str, value: float, userid, location: str = "None"
 ) -> bool:
-
+    """
+    Function that manages the user savings in the database
+    """
     # Connecting to a DB
     mongo = MongoConnector.connect_db_conf()
 
@@ -25,7 +30,7 @@ async def manage_savings(
     current_savings = 0
     try:
         savings_list = mongo.search_by_userid(userid=userid)["savings"]
-    except Exception as e:
+    except:
         current_savings = 0
 
     # Looking for savings id
@@ -37,18 +42,18 @@ async def manage_savings(
             savings_id = i
             break
     # Returning if we try to remove from non existing savings
-    if savings_id == -1 and action == Actions.remove.name:
+    if savings_id == -1 and action == Actions.REMOVE.name:
         return False
     # Getting current savings
     elif savings_id != -1:
         current_savings = savings_list[savings_id]["value"]
-        if action == Actions.remove and value > float(current_savings):
+        if action == Actions.REMOVE and value > float(current_savings):
             raise AssertionError(
                 "Problem removing savings, value is probably larger than the amount in savings."
             )
-        elif action == Actions.remove.name:
+        elif action == Actions.REMOVE.name:
             new_savings = float(current_savings) - float(value)
-        elif action == Actions.add.name:
+        elif action == Actions.ADD.name:
             new_savings = float(current_savings) + float(value)
 
         savings_list[savings_id]["value"] = new_savings
@@ -65,6 +70,8 @@ async def manage_savings(
 
 
 async def get_total_savings(userid: ObjectId) -> float:
+
+    """Gets the total ammount in the user savings"""
 
     mongo = MongoConnector.connect_db_conf()
 
