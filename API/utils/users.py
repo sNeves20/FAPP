@@ -1,10 +1,11 @@
-import re
-from pymongo import mongo_client
+""" Module in charge of handling the various user related requests """
+# pylint: disable=E0401
 from models.pydantic_schemas import UserBase
 from controller.mongo import MongoConnector
 
 
 async def user_exists(userdata: UserBase):
+    """Function that will check if a user exists in the database"""
 
     mongo = MongoConnector.connect_db_conf()
 
@@ -18,7 +19,7 @@ async def user_exists(userdata: UserBase):
 
 
 async def create_new_user(user_data: UserBase):
-
+    """Function that will create a new user"""
     # Connect to the MongoDB
     mongo = MongoConnector.connect_db_conf()
 

@@ -22,7 +22,7 @@ class DataConnector(ABC):
         This function receives a the user info as a 'UserData' object
         and adds the user to the database
         """
-    
+
     @classmethod
     @abstractmethod
     def edit_entry(cls, userid: ObjectId, query: dict):
