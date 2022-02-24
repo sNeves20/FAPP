@@ -1,33 +1,39 @@
-from logging import exception
+"""
+    Module in charge of stock handeling.
+    At the moment we are simply using a
+"""
+# pylint: disable=E0401
+
 from bson.objectid import ObjectId
-from fastapi.param_functions import Query
-from utils.users import user_exists
 from controller.mongo import MongoConnector
-from pymongo import mongo_client
 from models.pydantic_schemas import BrokerUser
 from enum import Enum, auto
 from utils.broker_functions.degiro import DegiroBroker
 
 
 class SupportedBrokers(Enum):
+    """List of Supported Brokers"""
 
-    degiro = auto()
-    etoro = auto()
+    DEGIRO = auto()
+    ETORO = auto()
 
 
+# TODO: This needs to be deprecated, it should be done with
+# session cookies and not adding this info to the database
 async def add_broker_account(user: BrokerUser, userid: ObjectId) -> bool:
+    """Function that adds a new broker account to the Database"""
 
     mongo = MongoConnector.connect_db_conf()
 
     try:
         query = mongo.search_by_userid(userid=userid)
-    except Exception as e:
-        print(f"\t ERROR in acessingDB {__name__}! Full error {e}")
+    except Exception as access_error:
+        print(f"\t ERROR in acessingDB {__name__}! Full error {access_error}")
         return False
 
     # Setting Broker list
     try:
-        if query != None:
+        if query is not None:
             broker_list = query["brokers"]
     except:
         broker_list = []
@@ -50,20 +56,21 @@ async def add_broker_account(user: BrokerUser, userid: ObjectId) -> bool:
         results = mongo.edit_entry(
             userid=userid, query={"$set": {"brokers": broker_list}}
         )
-    except Exception as e:
-        print(f"{e}")
+    except Exception as access_error:
+        print(f"{access_error}")
         return False
     return results
 
 
+# TODO: This should be deprecated and start getting this info from set cookies
 async def get_broker_information(userid: ObjectId, broker: str) -> dict:
-
+    """Function that gets the broker information from the DB"""
     mongo = MongoConnector.connect_db_conf()
 
     try:
         query = mongo.search_by_userid(userid=userid)
-    except Exception as e:
-        print(f"\t ERROR in accessing database {__name__}! Full error {e}")
+    except Exception as access_error:
+        print(f"\t ERROR in accessing database {__name__}! Full error {access_error}")
 
     if query != None:
         try:
@@ -101,7 +108,7 @@ async def get_portfolio_data(userid: ObjectId, broker_name: SupportedBrokers) ->
     except:
         return {"error": "This user does not contain any broker information"}
 
-    if broker_name == SupportedBrokers.degiro.name:
+    if broker_name == SupportedBrokers.DEGIRO.name:
         degiro_info = [b for b in brokers if b["broker"] == "degiro"][0]
         broker = DegiroBroker(
             degiro_info["broker_username"], degiro_info["broker_password"]

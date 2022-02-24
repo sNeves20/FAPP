@@ -3,9 +3,9 @@
     Entry point of the backend of the Financial Application API
 """
 # pylint: disable=E0602
+# pylint: disable=E0401
 
 import logging
-from datetime import datetime
 from bson.objectid import ObjectId
 from fastapi import FastAPI, Header
 from fastapi.params import Depends
