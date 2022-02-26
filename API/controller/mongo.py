@@ -100,7 +100,7 @@ class MongoConnector(DataConnector):
     def search_by_username(self, username: str) -> dict:
 
         user = self.collection.find_one({"username": username})
-
+        print(user)
         return user
 
     def search_by_userid(self, userid) -> dict:
