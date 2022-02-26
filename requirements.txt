@@ -1,9 +1,0 @@
-pymongo
-fastapi
-uvicorn
-pyyaml
-passlib[bcrypt]
-degiroapi
-requests
-black
-pylint
