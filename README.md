@@ -10,4 +10,7 @@ For storing data, I decided on using MongoDB. This is because the data that will
 
 ### Running the Application
 
-In order to run the application we are using Docker and DockerCompose. In order to run the API, you can simply run the 
+To run the application we are using Docker and DockerCompose. 
+In order to run the API, you can simply run the following command:
+`docker-compose up app`
+This will also run the *mongo* container which is the database container that is being used for storing and accessing data.
