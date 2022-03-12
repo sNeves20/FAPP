@@ -18,7 +18,8 @@ ERROR_MESSAGE = "ERROR; MongoConnector"
 
 
 class MongoConnector(DataConnector):
-    """ This class is responsible for handeling connections to the Mongo Database"""
+    """This class is responsible for handeling connections to the Mongo Database"""
+
     def __init__(self, mongo_host: str, mongo_port: int = None):
 
         self.data_base = None
@@ -27,7 +28,7 @@ class MongoConnector(DataConnector):
         self.open_connection(mongo_port=mongo_port, mongo_host=mongo_host)
 
     def open_connection(self, mongo_host, mongo_port):
-        """ Method that oppens connection to Mongo """
+        """Method that oppens connection to Mongo"""
         try:
             if mongo_port is not None:
                 self.client = MongoClient(mongo_host, port=mongo_port)
@@ -37,7 +38,7 @@ class MongoConnector(DataConnector):
             raise error_message
 
     def close_connection(self):
-        """ Method that closes connection to Mongo"""
+        """Method that closes connection to Mongo"""
         try:
             self.client.close()
         except Exception as error_message:
