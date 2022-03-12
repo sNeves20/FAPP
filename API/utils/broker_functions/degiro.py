@@ -3,8 +3,10 @@
 from utils.broker_functions import Broker
 import degiroapi
 
+
 class DegiroBroker(Broker):
     """Class that makes it possible to interact with Degiro API"""
+
     def __init__(self, username, password):
         super().__init__(username, password)
         self.degiro = degiroapi.DeGiro()

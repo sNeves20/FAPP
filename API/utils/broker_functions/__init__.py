@@ -4,6 +4,7 @@ from abc import abstractmethod, ABC
 
 class Broker(ABC):
     """Base of the Broker class all broker objects should inherite from this class"""
+
     def __init__(self, username, password):
 
         self.username = str(username)

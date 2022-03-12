@@ -1,15 +1,14 @@
 """
     MongoConnector Class
     This class is in charge of connecting to a Mongo Database in order to
-    access data  
+    access data
 """
-from genericpath import exists
-from pymongo.operations import InsertOne
+# pylint: disable=E0401
+
 from models.pydantic_schemas import UserData
 from pymongo import MongoClient, collection
 from bson.objectid import ObjectId
 import yaml
-from bson.objectid import ObjectId
 from controller import DataConnector
 
 
@@ -19,7 +18,7 @@ ERROR_MESSAGE = "ERROR; MongoConnector"
 class MongoConnector(DataConnector):
     def __init__(self, mongo_host: str, mongo_port: int = None):
 
-        self.db = None
+        self.data_base = None
         self.collection = None
 
         self.open_connection(mongo_port=mongo_port, mongo_host=mongo_host)
@@ -51,8 +50,8 @@ class MongoConnector(DataConnector):
         :returns bool: True if connection to DB was successful and False if it was not
         """
         try:
-            self.db = self.client[database_name]
-            self.collection = self.db[collection_name]
+            self.data_base = self.client[database_name]
+            self.collection = self.data_base[collection_name]
         except Exception as e:
             print(f"{ERROR_MESSAGE}: Error connecting to Database \n\t {e}")
             return False
