@@ -1,1 +1,0 @@
-docker exec -it  mongo_db bash

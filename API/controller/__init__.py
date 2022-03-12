@@ -4,6 +4,8 @@ Place here all the information that should be loaded
 when accessing the controller module
 """
 
+# pylint: disable=E0401
+
 from abc import ABC, abstractmethod
 
 from bson.objectid import ObjectId
