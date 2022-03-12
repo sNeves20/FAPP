@@ -21,7 +21,7 @@ platformdirs==2.4.1
 pycparser==2.21
 pydantic==1.9.0
 pylint==2.12.2
-pymongo==3.*
+pymongo==4.0.1
 PyYAML==6.0
 requests==2.27.1
 six==1.16.0

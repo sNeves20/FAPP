@@ -77,7 +77,7 @@ async def login_user(credentials: HTTPBasicCredentials = Depends(security)):
 async def edit_user_savings(savings_info: SavingsBody, userid: str = Header(None)):
     """Adds or removes value to savings according to bank location"""
 
-    action = savings_info.action.lower()
+    action = savings_info.action.upper()
     value = savings_info.amount
     location = savings_info.location
 
@@ -90,7 +90,7 @@ async def edit_user_savings(savings_info: SavingsBody, userid: str = Header(None
         return JSONResponse(
             {
                 "error_message": "There is information missing in your request. "
-                "\n Please verify that your request has the correct: action and value"
+                "Please verify that your request has the correct: action and value"
             },
             status_code=400,
         )
@@ -113,9 +113,9 @@ async def edit_user_savings(savings_info: SavingsBody, userid: str = Header(None
             status_code=500,
         )
 
-    if action == Actions.add.name:
+    if action == Actions.ADD.name:
         message = ["added", "to"]
-    elif action == Actions.remove.name:
+    elif action == Actions.REMOVE.name:
         message = ["removed", "from"]
 
     return JSONResponse(
@@ -142,7 +142,8 @@ async def sync_broker_account(userdata: BrokerUser, userid: str = Header(None)):
         return JSONResponse(
             {
                 "message": "The broker you are trying add is not supported."
-                f"\n Try one of the following brokers: {SUPPORTED_BROKERS}"
+                "Try one of the following brokers: "
+                f"{[brokers.value for brokers in SupportedBrokers.__members__.values()]}",
             },
             status_code=400,
         )
