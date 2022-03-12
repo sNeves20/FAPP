@@ -3,11 +3,14 @@
     At the moment we are simply using a
 """
 # pylint: disable=E0401
+# pylint: disable=W0511
+# pylint: disable=W0703
+# pylint: disable=W0702
 
+from enum import Enum, auto
 from bson.objectid import ObjectId
 from controller.mongo import MongoConnector
 from models.pydantic_schemas import BrokerUser
-from enum import Enum, auto
 from utils.broker_functions.degiro import DegiroBroker
 
 
@@ -18,7 +21,7 @@ class SupportedBrokers(Enum):
     ETORO = auto()
 
 
-# TODO: This needs to be deprecated, it should be done with
+# FIXME: This needs to be deprecated, it should be done with
 # session cookies and not adding this info to the database
 async def add_broker_account(user: BrokerUser, userid: ObjectId) -> bool:
     """Function that adds a new broker account to the Database"""
@@ -62,7 +65,7 @@ async def add_broker_account(user: BrokerUser, userid: ObjectId) -> bool:
     return results
 
 
-# TODO: This should be deprecated and start getting this info from set cookies
+# FIXME: This should be deprecated and start getting this info from set cookies
 async def get_broker_information(userid: ObjectId, broker: str) -> dict:
     """Function that gets the broker information from the DB"""
     mongo = MongoConnector.connect_db_conf()
@@ -72,13 +75,13 @@ async def get_broker_information(userid: ObjectId, broker: str) -> dict:
     except Exception as access_error:
         print(f"\t ERROR in accessing database {__name__}! Full error {access_error}")
 
-    if query != None:
+    if query is not None:
         try:
             brokers = query["brokers"]
-        except:
+        except Exception as error_message:
             return {
                 "error": 404,
-                "message": "This user does not contain any broker info",
+                "message": f"This user does not contain any broker info; {error_message}",
             }
 
     for broker_info in brokers:
@@ -92,16 +95,16 @@ async def get_broker_information(userid: ObjectId, broker: str) -> dict:
 
 
 async def get_portfolio_data(userid: ObjectId, broker_name: SupportedBrokers) -> dict:
-
+    """Function that gets portfolio data"""
     mongo = MongoConnector.connect_db_conf()
 
     try:
         query = mongo.search_by_userid(userid=userid)
-    except Exception as e:
-        print(f"\t ERROR in accessing database {__name__}! Full error {e}")
+    except Exception as error_message:
+        print(f"\t ERROR in accessing database {__name__}! Full error {error_message}")
 
     # Return message in case the user has no brokers associated
-    if query == None:
+    if query is None:
         return {"error": "No user exists with that user_id"}
     try:
         brokers = query["brokers"]

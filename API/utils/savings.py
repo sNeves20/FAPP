@@ -1,10 +1,9 @@
 """
     This module is in charge of handeling the Savings actions
 """
-# pylint: disable=E0401
+# pylint: disable=E0401, R1705,R1720, W0702
 
 from enum import Enum, auto
-
 from bson.objectid import ObjectId
 from controller.mongo import MongoConnector
 
@@ -36,7 +35,7 @@ async def manage_savings(
     # Looking for savings id
     savings_id = -1
     new_savings = 0
-    for i in range(len(savings_list)):
+    for i, _ in enumerate(savings_list):
         savings = savings_list[i]
         if savings["location"] == location.lower():
             savings_id = i
@@ -55,6 +54,8 @@ async def manage_savings(
             new_savings = float(current_savings) - float(value)
         elif action == Actions.ADD.name:
             new_savings = float(current_savings) + float(value)
+        else:
+            raise Exception("Unkown Action Was Given.")
 
         savings_list[savings_id]["value"] = new_savings
 

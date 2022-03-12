@@ -1,6 +1,6 @@
 name: Check Pipeline
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   Pylint:

@@ -5,8 +5,8 @@ services:
   app:
     container_name: backend_container
     build: 
-      context: ./API
-      dockerfile: ./API
+      context: ./api
+      dockerfile: ./api
     restart: always
     volumes: 
       - .:/home/developer
