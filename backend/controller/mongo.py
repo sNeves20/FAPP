@@ -70,9 +70,8 @@ class MongoConnector(DataConnector):
         :returns bool: Returns true if user was added to DB and false if it was not
         """
         json_data = user.dict()
-        print(json_data)
         try:
-            self.collection.insert(json_data)
+            self.collection.insert_one(json_data)
         except Exception as e:
 
             print(f"{ERROR_MESSAGE}: Error Adding entry \n \t {e}")
