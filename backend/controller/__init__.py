@@ -39,8 +39,3 @@ class DataConnector(ABC):
     @abstractmethod
     def search_by_userid(cls, userid: ObjectId):
         """This function will search a user by user id"""
-
-    @staticmethod
-    @abstractmethod
-    def connect_db_conf():
-        """This function  will return an object"""

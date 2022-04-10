@@ -7,7 +7,7 @@
 
 import logging
 from bson.objectid import ObjectId
-from fastapi import FastAPI, Header
+from fastapi import FastAPI, Header, HTTPException
 from fastapi.params import Depends
 from fastapi.security import HTTPBasicCredentials, HTTPBasic
 from fastapi.responses import JSONResponse
@@ -123,14 +123,30 @@ async def edit_user_savings(savings_info: SavingsBody, userid: str = Header(None
         status_code=200,
     )
 
+@app.put("/savings/add")
+async def add_savings(savings_info: SavingsBody, userid: str = Header(None)):
+    """Increments the amount in savings"""
+
+    result = await add_savings(savings_info)
+    if result:
+        return result
+    return HTTPException(400, "The information could not be added")
+
+@app.put("/savings/remove")
+async def remove_savings(savings_info: SavingsBody, userid: str = Header(None)):
+    """Subtracs from the amount in savings"""
+
+    result = await  remove_savings(savings_info)
+
+    if result:
+        return result
+    
+    return HTTPException(400, "The information on the ")
 
 @app.get("/savings/getTotalAmount")
 async def get_all_savings(userid: str = Header(None)):
     """Gets the total amount in savings"""
-    userid = ObjectId(userid)
-    return JSONResponse(
-        {"message": f"{await get_total_savings(userid)}"}, status_code=200
-    )
+    return {"ERROR": "Still Not Implemented",}
 
 
 # Stock endpoints
